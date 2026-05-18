@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Devotion | Sacred PDF Library</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, 'Times New Roman', serif;
+      background: radial-gradient(circle at 20% 30%, #0e0719, #160b29, #1f113a);
+      min-height: 100vh;
+      color: #f3e5ff;
+      line-height: 1.5;
+    }
+
+    .landing-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 2rem 1.8rem 4rem;
+    }
+
+    /* ornate header */
+    .crown-header {
+      text-align: center;
+      margin-bottom: 3rem;
+      border-bottom: 1px solid rgba(181, 120, 255, 0.777);
+      padding-bottom: 1.8rem;
+    }
+
+    .crown-header h1 {
+      font-size: 2.5rem;
+      font-weight: 500;
+      letter-spacing: 2px;
+      background: linear-gradient(135deg, #ecd9ff, #c49eff);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .crown-header p {
+      color: #cfb5f5;
+      margin-top: 0.7rem;
+      font-style: italic;
+      font-weight: 300;
+    }
+
+    .divider {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      font-size: 1.3rem;
+      margin: 1.2rem 0 1rem;
+      opacity: 0.7;
+    }
+
+    /* main grid - each card holds a PDF hyperlink button */
+    .offerings-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      max-width: 800px;
+      margin: 2rem auto;
+    }
+
+    .vow-card {
+      background: rgba(46, 24, 78, 0.6);
+      backdrop-filter: blur(12px);
+      border-radius: 2rem;
+      padding: 1.5rem 2rem;
+      border: 1px solid rgba(192, 132, 252, 0.45);
+      transition: all 0.3s ease;
+      box-shadow: 0 15px 30px -12px rgba(0, 0, 0, 0.5);
+    }
+
+    .vow-card:hover {
+      transform: translateY(-5px);
+      background: rgba(70, 40, 110, 0.75);
+      border-color: #cf9eff;
+      box-shadow: 0 25px 35px -12px rgba(156, 76, 255, 0.4);
+    }
+
+    /* PDF hyperlink button styling */
+    .pdf-button {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      text-decoration: none;
+      font-size: 1.35rem;
+      font-weight: 600;
+      padding: 0.8rem 1.2rem;
+      background: linear-gradient(135deg, #4a2c7a, #341e59);
+      border-radius: 1.5rem;
+      color: #f5eaff;
+      transition: all 0.25s ease;
+      border: 1px solid #b77eff;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .pdf-button:hover {
+      background: linear-gradient(135deg, #6b42a8, #4a2a7c);
+      transform: translateX(8px);
+      border-color: #f0c4ff;
+      box-shadow: 0 8px 18px rgba(128, 64, 255, 0.4);
+    }
+
+    .pdf-button:active {
+      transform: translateX(4px);
+    }
+
+    .link-icon {
+      font-size: 1.8rem;
+    }
+
+    .link-text {
+      flex: 1;
+      text-align: left;
+    }
+
+    .arrow-icon {
+      font-size: 1.4rem;
+      opacity: 0.7;
+      transition: transform 0.2s;
+    }
+
+    .pdf-button:hover .arrow-icon {
+      transform: translateX(5px);
+      opacity: 1;
+    }
+
+    .link-description {
+      font-size: 0.78rem;
+      margin-top: 0.8rem;
+      margin-left: 3rem;
+      color: #c1a2f0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      letter-spacing: 0.2px;
+    }
+
+    /* PDF hint badge */
+    .pdf-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(92, 48, 158, 0.6);
+      border-radius: 60px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.7rem;
+      font-weight: normal;
+      margin-left: 0.5rem;
+    }
+
+    .altar-signature {
+      text-align: center;
+      margin-top: 4rem;
+      padding: 2rem 1rem;
+      background: rgba(25, 12, 45, 0.5);
+      border-radius: 3rem;
+      border-top: 1px solid #9f70e6;
+      border-bottom: 1px solid #9f70e6;
+    }
+
+    .altar-signature p {
+      font-size: 0.95rem;
+      color: #d3bbfc;
+    }
+
+    .offering-note {
+      font-size: 0.8rem;
+      background: #2e1c4e;
+      display: inline-block;
+      padding: 0.3rem 1rem;
+      border-radius: 50px;
+    }
+
+    /* toast message for PDF info */
+    .purple-toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #3b2370;
+      backdrop-filter: blur(20px);
+      color: #f2e4ff;
+      padding: 12px 24px;
+      border-radius: 60px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      border: 1px solid #b687ff;
+      z-index: 10000;
+      animation: fadeSlide 0.3s ease;
+      white-space: nowrap;
+      max-width: 90vw;
+      white-space: normal;
+      text-align: center;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+
+    @keyframes fadeSlide {
+      0% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(20px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+    }
+
+    @media (max-width: 700px) {
+      .landing-container {
+        padding: 1.2rem;
+      }
+      .pdf-button {
+        font-size: 1rem;
+        padding: 0.6rem 1rem;
+      }
+      .link-icon {
+        font-size: 1.4rem;
+      }
+      .vow-card {
+        padding: 1rem 1.2rem;
+      }
+      .link-description {
+        margin-left: 2rem;
+      }
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #1d0f31;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #8b5cf6;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="landing-container">
+  <div class="crown-header">
+    <h1>𓍊ꨄ︎𓍊  Sanctuary To My Queen  𓍊ꨄ︎𓍊</h1>
+    <p>From your devoted sub, to my Queen</p>
+    <div class="divider">✧ ༺ ♡♡♡ ༻ ✧</div>
+  </div>
+
+  <div class="offerings-grid">
+    
+    <!-- 1. My Perfect and Beautiful Queen (1) -->
+    <div class="vow-card">
+      <a href="My Perfect and Beautiful Queen (1).pdf" class="pdf-button" target="_blank" id="queen-pdf-btn">
+        <span class="link-icon">👑</span>
+        <span class="link-text">My Perfect and Beautiful Queen</span>
+        <span class="arrow-icon">➤</span>
+      </a>
+      <div class="link-description">
+        <span>✦</span> I belong to my Queen <span>✦</span>
+      </div>
+    </div>
+
+    <!-- 2. From Your Devoted Sub_ A Desperate Plea (1) -->
+    <div class="vow-card">
+      <a href="From Your Devoted Sub_ A Desperate Plea (1).pdf" class="pdf-button" target="_blank" id="plea-pdf-btn">
+        <span class="link-icon">📜</span>
+        <span class="link-text">From Your Devoted Sub_ A Desperate Plea</span>
+        <span class="arrow-icon">➤</span>
+      </a>
+      <div class="link-description">
+        <span>✧</span> Under your feet <span>✧</span>
+      </div>
+    </div>
+
+    <!-- 3. Rituals (1) -->
+    <div class="vow-card">
+      <a href="Rituals (1).pdf" class="pdf-button" target="_blank" id="rituals-pdf-btn">
+        <span class="link-icon">🕯️</span>
+        <span class="link-text">Rituals</span>
+        <span class="arrow-icon">➤</span>
+      </a>
+      <div class="link-description">
+        <span>༄</span> Sacred practices <span>༄</span>
+      </div>
+    </div>
+
+    <!-- 4. My Dreams In A Relationship -->
+    <div class="vow-card">
+      <a href="My Dreams In A Relationship.pdf" class="pdf-button" target="_blank" id="dreams-pdf-btn">
+        <span class="link-icon">🌙</span>
+        <span class="link-text">My Dreams In A Relationship</span>
+        <span class="arrow-icon">➤</span>
+      </a>
+      <div class="link-description">
+        <span>☆</span> My hopes and dreams <span>☆</span>
+      </div>
+    </div>
+
+    <!-- 5. Apology #1 (NEW BUTTON) -->
+    <div class="vow-card">
+      <a href="Apology(1).pdf" class="pdf-button" target="_blank" id="apology-pdf-btn">
+        <span class="link-icon">💔</span>
+        <span class="link-text">Apology #1</span>
+        <span class="arrow-icon">➤</span>
+      </a>
+      <div class="link-description">
+        <span>🌹</span> From the bottom of my heart, I'm sorry <span>🌹</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="altar-signature">
+    <p>“My Queen, please click any button to open the file”</p>
+    <div class="offering-note">
+      𖦹 My submission and devotion will never waver 𖦹
+    </div>
+    <div style="margin-top: 1rem; font-size: 0.7rem; opacity: 0.65;">
+      ⋆｡°✩ My eternal devotion to you, my Queen ✩°｡⋆
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    // Helper function to show a toast message
+    function showMessage(msg, isError = false) {
+      const existingToast = document.querySelector('.purple-toast');
+      if (existingToast) existingToast.remove();
+      const toast = document.createElement('div');
+      toast.className = 'purple-toast';
+      toast.textContent = msg;
+      if (isError) toast.style.borderColor = '#ff99cc';
+      document.body.appendChild(toast);
+      setTimeout(() => {
+        if (toast && toast.remove) toast.remove();
+      }, 2800);
+    }
+
+    // Get all PDF buttons
+    const pdfButtons = document.querySelectorAll('.pdf-button');
+    
+    // Add click tracking and error handling for missing PDFs
+    pdfButtons.forEach(button => {
+      button.addEventListener('click', function(e) {
+        const pdfUrl = this.getAttribute('href');
+        const linkName = this.querySelector('.link-text')?.innerText || 'PDF';
+        
+        console.log(`📄 Opening PDF: "${linkName}" from path: ${pdfUrl}`);
+        showMessage(`📖 Opening "${linkName}"...`, false);
+        
+        // Note: The browser will handle the PDF opening.
+        // If the PDF doesn't exist, the browser will show a 404 error page.
+        // We add a small delay to ensure the toast is visible
+      });
+    });
+
+    // Optional: Check if PDF files exist (helpful for debugging)
+    // This runs in console only, not intrusive
+    const pdfFiles = [
+      "My Perfect and Beautiful Queen (1).pdf",
+      "From Your Devoted Sub_ A Desperate Plea (1).pdf",
+      "Rituals (1).pdf",
+      "My Dreams In A Relationship.pdf",
+      "Apology #1.pdf"
+    ];
+    
+    console.log("💜 PDF Hyperlink System Ready");
+    console.log("📁 Expected PDF files in the same folder:");
+    pdfFiles.forEach(file => console.log(`   - ${file}`));
+    console.log("✨ Click any purple button to open its PDF in a new tab.");
+  })();
+</script>
+</body>
+</html>
